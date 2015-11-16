@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 STRICT//EN" "http://www.w3.org/TR/HTML401/strict.dtd">
+<html lang="en">
+<head>
+<title>Page Title</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body>
+<script type="text/javascript">
+
+var QIMG="images/Q.JPG";
+
+var images=[
+
+"images/AH.JPG",
+"images/AC.JPG",
+"images/AD.JPG",
+"images/AS.JPG",
+"images/AHa.JPG",
+"images/ACa.JPG",
+"images/ADa.JPG",
+"images/ASa.JPG"
+];
+
+var card1=-1;
+var wait=false;
+var moves=0;
+function show(n) {
+  if(wait) return;
+  if(n==card1 || revealed[n]) return;
+  if(card1<0) {
+    card1=n;
+    document.getElementById("img"+n).src=cards[n];
+  } else {
+    wait=true;
+    moves++;
+    document.getElementById("img"+n).src=cards[n];
+    if(cards[n]==cards[card1]) {
+      revealed[card1]=true;
+      revealed[n]=true;
+      wait=false;
+      card1=-1;
+      pairs++;
+      if(pairs==images.length) {
+        alert("You win! You took "+moves+" moves.");
+        shuffle();
+      }
+    } else {
+      setTimeout("hide("+n+", "+card1+")", 1000)
+    }
+  }
+}
+function hide(m, n) {
+  document.getElementById("img"+m).src=QIMG;
+  document.getElementById("img"+n).src=QIMG;
+  card1=-1;
+  wait=false;
+}
+
+var rows=Math.floor(Math.sqrt(2*images.length));
+var cols=2*images.length/rows;
+
+var cards=new Array();
+var revealed=new Array();
+var pairs=0;
+
+for(var i=0; i<(rows*cols)/2; i++) {
+  revealed[2*i]=false;
+  revealed[2*i+1]=false;
+  var tmp=Math.floor(Math.random()*(rows*cols));
+  if(tmp==(rows*cols)) tmp--;
+  while(cards[tmp]!=null) tmp=(tmp+(rows*cols+1))%(rows*cols);
+  cards[tmp]=images[i%images.length];
+  tmp=(rows*cols)-Math.floor(Math.random()*(rows*cols));
+  if(tmp==(rows*cols)) tmp--;
+  while(cards[tmp]!=null) tmp=(tmp+(rows*cols+1))%(rows*cols);
+  cards[tmp]=images[i%images.length];
+}
+
+function shuffle() {
+  for(var i=0; i<cards.length; i++) {
+    cards[i]=null;
+    revealed[i]=false;
+    document.getElementById("img"+i).src=QIMG;
+  }
+  card1=-1;
+  pairs=0;
+  moves=0;
+  for(var i=0; i<(rows*cols)/2; i++) {
+    revealed[2*i]=false;
+    revealed[2*i+1]=false;
+    var tmp=Math.floor(Math.random()*(rows*cols));
+    if(tmp==(rows*cols)) tmp--;
+    while(cards[tmp]!=null) tmp=(tmp+(rows*cols+1))%(rows*cols);
+    cards[tmp]=images[i%images.length];
+    tmp=(rows*cols)-Math.floor(Math.random()*(rows*cols));
+    if(tmp==(rows*cols)) tmp--;
+    while(cards[tmp]!=null) tmp=(tmp+(rows*cols+1))%(rows*cols);
+    cards[tmp]=images[i%images.length];
+  }
+}
+
+document.write("<table>");
+for(var i=0; i<rows; i++) {
+  document.write("<tr>");
+  for(var j=0; j<cols; j++) {
+    document.write("<td><img id='img"+(i*cols+j)+"' onmousedown='show("+(i*cols+j)+")' src='"+QIMG+"'><\/td>");
+  }
+  document.write("<\/tr>");
+}
+document.write("<\/table>");
+</script>
+</body>
+</html>
